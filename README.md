@@ -1,116 +1,212 @@
-# STMPAS — Smart Transportation Management & Parcel Allocation System
+# FleetManagementPortal
 
-Full-stack implementation of the SRD: React + Node/Express + PostgreSQL, with a real
-**Adaptive Multi-Constraint Fleet Optimization Algorithm (AMFOA)** engine implementing the
-DAA concepts from Section 10 of the document.
+> **Smart Transportation Management & Multi-Constraint Fleet Parcel Allocation System**  
+> An enterprise-grade, algorithmically-driven logistics and fleet management platform powered by modern web technologies and real-world Design and Analysis of Algorithms (DAA) engines.
 
-## 1. Stack
+---
 
-| Layer | Tech |
+## 🌟 Overview
+
+**FleetManagementPortal** is a full-stack smart transportation and logistics dispatch platform designed to solve complex multi-vehicle dispatch, capacity optimization, and multi-stop routing problems. 
+
+At its core is the **Adaptive Multi-Constraint Fleet Optimization Algorithm (AMFOA)**, which orchestrates vehicle selection, payload constraints, driver shift constraints, and pathfinding across realistic road networks (seeded with Ahmedabad's primary industrial and logistics corridors).
+
+---
+
+## 🚀 Key Features
+
+- **🧠 AMFOA Engine (7-Factor Weighted Scoring)**: Evaluates candidate vehicles based on travel distance, payload capacity utilization, volumetric fit, driver shift hours, vehicle fuel efficiency, delivery deadline urgency, and fragile consignment handling.
+- **🎒 2D Knapsack Load Maximizer**: An exact branch-and-bound 0/1 multi-constraint knapsack algorithm with density heuristic sorting (`value / (w/maxW + v/maxV)`) that maximizes total delivery priority within hard payload weight (kg) and volume (m³) vehicle budgets, complete with 1-click batch allocation.
+- **🗺️ Dijkstra & A\* Road Network Routing**: Shortest-path routing over weighted road-network graphs with traffic-factor multipliers powered by custom min-heaps.
+- **🔄 Held-Karp Bitmask DP Route Sequencing**: Exact Traveling Salesperson Problem (TSP) dynamic programming algorithm ($O(n^2 2^n)$) for optimal stop sequencing on vehicles with multi-parcel dispatches.
+- **🚚 Comprehensive Role-Based Dashboards**:
+  - **Admin Dashboard**: System health metrics, fleet analytics, driver login CRUD with bcrypt hashing, vehicle fleet management, parcel tracking, and AMFOA score breakdown visualizers.
+  - **Fleet Manager Dashboard**: Dispatch command center, pending parcel queue, live Leaflet map with hub coordinates, Knapsack load optimization tool, and route DP optimizer.
+  - **Driver Dashboard**: Active assignments, delivery progression (`pending` → `assigned` → `in_transit` → `delivered`), step-by-step route directions, and shift hour tracking.
+- **⚡ Universal Data Table with Sorting & Multi-Column Filtering**: High-performance table sorting (numeric, text, date, boolean) with global keyword search, per-column filters, and pagination across every data view.
+- **🌙 Complete Dark Mode**: Seamless dark and light mode toggle with state persistence.
+- **📍 Real-World Ahmedabad Logistics Network**: Pre-seeded with 12 real-world logistics nodes (Sanand GIDC, Changodar, Naroda, Sarkhej, SG Highway, Kalupur Terminal, etc.) and connecting transit corridors.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
 |---|---|
-| Frontend | React 18 (Vite) + Tailwind CSS + React Router + Axios + Leaflet (OpenStreetMap) |
-| Backend | Node.js + Express |
-| Database | PostgreSQL |
-| Auth | JWT + bcrypt, role-based (`admin`, `fleet_manager`, `driver`, `customer`) |
+| **Frontend** | React 18, Vite, Tailwind CSS, Leaflet, React-Leaflet, Axios, React Router 6 |
+| **Backend** | Node.js, Express.js, PostgreSQL Client (`pg`), JWT, Bcrypt |
+| **Database** | PostgreSQL (Relational schema with foreign keys, checks, and transactions) |
+| **Algorithms** | AMFOA (Multi-criteria greedy), 2D Branch-and-Bound Knapsack, Dijkstra/A\*, Held-Karp TSP DP, Priority Queue Min-Heap, Merge Sort |
 
-## 2. Setup
+---
 
-### Prerequisites
-- Node.js 18+
-- PostgreSQL 14+
+## 📐 Algorithmic Architecture (DAA Implementation)
 
-### Database
+| Algorithmic Paradigm | Implementation File | Mathematical & Operational Function |
+|---|---|---|
+| **Adaptive Multi-Criteria Optimization (AMFOA)** | [`backend/algorithms/amfoa.js`](backend/algorithms/amfoa.js) | Evaluates candidate vehicles across 7 weighted normalized criteria: distance ($w_1=0.25$), capacity utilization ($w_2=0.20$), volume fit ($w_3=0.15$), driver hours ($w_4=0.15$), fuel economy ($w_5=0.10$), urgency bonus ($w_6=0.10$), and fragile handling ($w_7=0.05$). |
+| **2D Multi-Constraint Knapsack** | [`backend/algorithms/knapsack.js`](backend/algorithms/knapsack.js) | Solves the 2-dimensional 0/1 knapsack problem under simultaneous weight ($W$) and volume ($V$) constraints. Uses density heuristic sorting with suffix-potential upper bound pruning and payload load maximization tie-breakers. |
+| **Graph Shortest Path (Dijkstra / A\*)** | [`backend/algorithms/graph.js`](backend/algorithms/graph.js) | Computes optimal point-to-point transit paths across the road network graph considering edge distance ($\text{km}$) scaled by real-time traffic congestion factors. Includes Haversine-accelerated A\* search. |
+| **Traveling Salesperson DP (Held-Karp)** | [`backend/algorithms/tspDP.js`](backend/algorithms/tspDP.js) | Bitmask dynamic programming computing exact optimal sequence for up to 12 delivery stops in $O(n^2 2^n)$ time; gracefully falls back to 2-opt nearest-neighbor for larger stop lists. |
+| **Priority Queue (Min-Heap)** | [`backend/algorithms/priorityQueue.js`](backend/algorithms/priorityQueue.js) | Binary min-heap ordering pending batch parcels by urgency score and powering Dijkstra's vertex extraction in $O(\log V)$ time. |
+| **Divide & Conquer (Merge Sort)** | [`backend/algorithms/mergeSort.js`](backend/algorithms/mergeSort.js) | Stable $O(n \log n)$ sorting algorithm ordering parcel queues by deadline timestamps and priority levels. |
+
+---
+
+## 👥 Demo User Accounts
+
+All pre-seeded demo accounts use the standard password: **`password123`**
+
+| Role | Email | Description |
+|---|---|---|
+| **Admin** | `admin@stmpas.com` | Full administrative control, system metrics, driver login management, vehicle fleet CRUD, parcel dispatching, and AMFOA scoring breakdowns. |
+| **Fleet Manager** | `fleet@stmpas.com` | Real-time fleet monitoring, map dispatch, parcel management, 0/1 Knapsack load maximizer, and Held-Karp multi-stop route DP solver. |
+| **Fleet Driver** | `rajesh@stmpas.com` | Assigned to Tata Ace EV (`GJ01-AZ-1024`). Active delivery execution, route viewer, and shift logger. |
+| **Fleet Driver** | `vikram@stmpas.com` | Assigned to Ashok Leyland Dost+ (`GJ01-BT-4096`). |
+| **Fleet Driver** | `hitesh@stmpas.com` | Assigned to Mahindra Bolero Maxi Truck (`GJ01-CX-5512`). |
+| **Fleet Driver** | `amit.driver@stmpas.com` | Assigned to Eicher Pro 2049 (`GJ01-DW-9901`). |
+| **Fleet Driver** | `jignesh@stmpas.com` | Assigned to Piaggio Ape Extra LDX Cargo (`GJ01-FK-2115`). |
+| **Fleet Driver** | `hardik@stmpas.com` | Assigned to Tata Intra V30 Smart Pickup (`GJ01-ET-7821`). |
+
+*(Quick 1-click demo login buttons are provided directly on the Login page).*
+
+---
+
+## ⚡ Quick Start Guide
+
+### 1. Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **PostgreSQL**: v14.0 or higher
+- **npm** or **yarn**
+
+### 2. Database Setup
+Ensure PostgreSQL is running locally, then initialize the database:
+
 ```bash
-createdb stmpas
-psql -d stmpas -f backend/db/schema.sql
+# Connect to PostgreSQL and create database
+createdb stmpas2
+
+# Execute the schema migration
+psql -d stmpas2 -f backend/db/schema.sql
 ```
 
-### Backend
+### 3. Backend Setup
 ```bash
 cd backend
-cp .env.example .env      # edit PG* credentials and JWT_SECRET
+
+# Create environment configuration from template
+cp .env.example .env
+
+# Verify database credentials in .env:
+# PORT=5000
+# PGUSER=postgres
+# PGPASSWORD=your_postgres_password
+# PGDATABASE=stmpas2
+# JWT_SECRET=your_secret_key
+
+# Install dependencies
 npm install
-npm run seed               # loads demo locations, road graph, users, vehicles, parcels
-npm run dev                 # http://localhost:5000
+
+# Seed Ahmedabad logistics hubs, road edges, vehicles, drivers, and parcels
+npm run seed
+
+# Start development server
+npm run dev
+# Server runs on http://localhost:5000
 ```
 
-### Frontend
+### 4. Frontend Setup
 ```bash
 cd frontend
-cp .env.example .env       # VITE_API_URL, defaults to http://localhost:5000/api
+
+# Create environment configuration
+cp .env.example .env
+
+# Install dependencies
 npm install
-npm run dev                 # http://localhost:3000
+
+# Start Vite development server
+npm run dev
+# Application accessible at http://localhost:3000
 ```
 
-### Demo logins (password: `password123`)
-| Role | Email | Details |
+---
+
+## 📡 REST API Reference
+
+### Authentication
+- `POST /api/auth/register` — Register a new account
+- `POST /api/auth/login` — Authenticate and receive JWT bearer token
+
+### Vehicles
+- `GET /api/vehicles` — Retrieve all vehicles with status, current location, and driver info
+- `POST /api/vehicles` — Create a new vehicle *(Admin only)*
+- `PUT /api/vehicles/:id` — Update vehicle specifications and status *(Admin, Fleet Manager)*
+- `DELETE /api/vehicles/:id` — Delete vehicle *(Admin only)*
+- `GET /api/vehicles/:id/score-breakdown` — Calculate vehicle readiness score ($0\text{--}100$) and operational health factors
+
+### Drivers & Logins
+- `GET /api/drivers` — Retrieve all drivers with login credentials, vehicle assignment, and shift hours
+- `POST /api/drivers` — Create driver record and companion user authentication account *(Admin only)*
+- `PUT /api/drivers/:id` — Update driver details, vehicle assignment, and password *(Admin only)*
+- `DELETE /api/drivers/:id` — Remove driver and associated login account *(Admin only)*
+
+### Parcels & Consignments
+- `GET /api/parcels` — List all parcels ordered by deadline (custom merge sort)
+- `POST /api/parcels` — Create new delivery consignment *(Admin, Fleet Manager)*
+- `PUT /api/parcels/:id` — Update consignment specifications *(Admin, Fleet Manager)*
+- `DELETE /api/parcels/:id` — Remove parcel and restore vehicle capacity if assigned *(Admin, Fleet Manager)*
+
+### AMFOA & Algorithmic Optimization
+- `POST /api/assignments/allocate/:parcelId` — Run 7-factor AMFOA optimization on a single pending parcel
+- `POST /api/assignments/allocate-batch` — Drain min-heap priority queue and allocate all pending parcels
+- `GET /api/assignments/parcel-breakdown/:parcelId` — Detailed factor breakdown and candidate rankings for a parcel
+- `POST /api/assignments/optimize-load/:vehicleId` — 2D Knapsack load maximization recommendation
+- `POST /api/assignments/apply-knapsack-load/:vehicleId` — 1-click atomic batch allocation of knapsack package to vehicle
+- `POST /api/assignments/optimize-route/:vehicleId` — Held-Karp bitmask DP optimal delivery stop sequence
+- `GET /api/assignments` — List historical assignments and AMFOA scores
+- `GET /api/assignments/my-deliveries` — Retrieve active delivery schedule for the logged-in driver
+- `PUT /api/assignments/:id/complete` — Mark assignment as delivered and decrement vehicle payload
+
+### Locations & Network Graph
+- `GET /api/locations` — Retrieve all 12 Ahmedabad hubs and 15 connecting road corridor edges
+
+### Dashboard Analytics
+- `GET /api/dashboard/summary` — Aggregate operational statistics (fleet readiness, pending load, delivery rate)
+- `GET /api/dashboard/routes/:vehicleId` — Detailed transit path and assigned parcels for a specific vehicle
+
+---
+
+## 🗺️ Seeded Logistics Network (Ahmedabad Corridor)
+
+The system includes pre-configured GIS coordinates and road edges representing Ahmedabad's industrial transit infrastructure:
+
+| Hub ID | Location Hub Name | Type / Description |
 |---|---|---|
-| Admin | admin@stmpas.com | Full system control, analytics, driver/vehicle/parcel CRUD, AMFOA score breakdown |
-| Fleet Manager | fleet@stmpas.com | Real-time dispatch, live map, parcel CRUD, Knapsack & Held-Karp DP route solvers |
-| Drivers | rajesh@stmpas.com / vikram@stmpas.com / hitesh@stmpas.com | Active deliveries, AMFOA routes, delivery completion |
+| 1 | **Sanand GIDC Logistics Hub** | Heavy Industrial & Automobile Logistics Center |
+| 2 | **Changodar Industrial Area** | Manufacturing & Freight Transshipment Depot |
+| 3 | **Naroda GIDC Depot** | Eastern Industrial & Chemical Corridor Hub |
+| 4 | **Aslali Transport Hub** | Central Inter-State Trucking Terminal |
+| 5 | **Sarkhej Goods Terminal** | Southwestern Distribution & Warehousing Center |
+| 6 | **SG Highway Distribution Hub** | Commercial Express Distribution Center |
+| 7 | **Kalupur Central Railway Cargo** | Inter-Modal Rail-to-Road Cargo Hub |
+| 8 | **Odhav Industrial Estate** | Machinery & Hardware Logistics Yard |
+| 9 | **Vatva GIDC Phase IV** | Southern Manufacturing & Storage Yard |
+| 10 | **Chandkheda North Center** | Northern Suburban FMCG Hub |
+| 11 | **Bavla Highway Yard** | Agricultural & Agro-Chemical Logistics Center |
+| 12 | **Maninagar Express Hub** | Southeastern Parcel Fulfillment Center |
 
-## 3. Where each DAA concept lives
+---
 
-| SRD Section 10 concept | File | How it's used |
-|---|---|---|
-| Greedy Algorithm | `backend/algorithms/amfoa.js` | Highest-scoring vehicle wins each allocation |
-| Heap / Priority Queue | `backend/algorithms/priorityQueue.js` | Min-heap orders the batch queue by deadline+priority; also powers Dijkstra/A* |
-| Graph Algorithms + Dijkstra | `backend/algorithms/graph.js` | Shortest path on the road-network graph (`locations` + `road_edges` tables) |
-| A* Search | `backend/algorithms/graph.js` (`aStar`) | Heuristic-accelerated variant using haversine distance; available for larger graphs |
-| Knapsack (DP) | `backend/algorithms/knapsack.js` | 0/1 knapsack picks the best subset of pending parcels for one vehicle's remaining capacity — wired to `POST /assignments/optimize-load/:vehicleId` and the Fleet Manager UI |
-| Sorting | `backend/algorithms/mergeSort.js` | Custom merge sort orders the parcel list by deadline (`GET /parcels`) |
-| Dynamic Programming (multi-stop) | `backend/algorithms/tspDP.js` | Held-Karp bitmask DP gives the exact optimal stop order for ≤12 stops (falls back to nearest-neighbor beyond that) — wired to `POST /assignments/optimize-route/:vehicleId` |
+## 🔒 Security & Best Practices
 
-`amfoa.js` is the orchestrator (Section 7–8 & 11 of the SRD): capacity filter → driver-hours
-filter → Dijkstra distance scoring → seven-factor weighted score → greedy selection.
-`allocateBatch` drains the priority queue so the most urgent parcels are optimized first,
-and vehicle loads accumulate across a batch run so one vehicle can legitimately receive
-multiple parcels up to its capacity — matching the knapsack "maximize loading" idea.
+- **Password Hashing**: Passwords stored using `bcryptjs` with salt rounds.
+- **JWT Authentication**: Secure stateless token authentication with expiration.
+- **Database Transactions**: Multi-step assignment operations (updating vehicle load, changing parcel status, logging AMFOA breakdown) run within atomic PostgreSQL transactions (`BEGIN ... COMMIT / ROLLBACK`).
+- **Input Sanitization**: Parameterized SQL queries prevent SQL injection across all endpoints.
 
-## 4. API summary
+---
 
-```
-POST   /api/auth/register
-POST   /api/auth/login
+## 📄 License
 
-GET    /api/vehicles                       POST /api/vehicles         PUT/DELETE /api/vehicles/:id
-GET    /api/vehicles/:id/score-breakdown   ← AMFOA operational score & readiness breakdown
-GET    /api/drivers                        POST /api/drivers          PUT/DELETE /api/drivers/:id
-GET    /api/parcels                        POST /api/parcels          PUT/DELETE /api/parcels/:id
-GET    /api/locations                      ← Ahmedabad logistics hubs & road edges
-
-POST   /api/assignments/allocate/:parcelId       ← single-parcel AMFOA run
-POST   /api/assignments/allocate-batch           ← priority-queue batch AMFOA run
-GET    /api/assignments/parcel-breakdown/:id     ← 7-factor AMFOA scoring breakdown & candidate rankings
-POST   /api/assignments/optimize-load/:vehicleId ← knapsack DP load suggestion
-POST   /api/assignments/optimize-route/:vehicleId← Held-Karp DP multi-stop route
-GET    /api/assignments                          GET /api/assignments/my-deliveries (driver)
-PUT    /api/assignments/:id/complete             (driver marks delivered)
-
-GET    /api/dashboard/summary
-GET    /api/dashboard/routes/:vehicleId
-```
-
-All routes except `/auth/*` require `Authorization: Bearer <token>`.
-
-## 5. Known simplifications (documented, not accidental)
-
-- Vehicle GPS positions are the seeded `locations` coordinates, not a live GPS feed —
-  swap in a real telemetry source by updating `vehicles.current_location_id` (or adding
-  live lat/lng columns) and the map updates automatically.
-- Driver `working_hours_today` and vehicle `status` are updated manually via the
-  PUT endpoints; a production system would tick these from real check-in/check-out events.
-- Estimated route time is a flat `distance × 2 min/km` placeholder — replace with a real
-  speed model or traffic API when available.
-- QR-based parcel scanning, invoices, and push notifications (SRD Sections 5–6) are
-  represented by their DB tables (`notifications`, parcel `status`) but don't yet have
-  dedicated endpoints — straightforward to add following the existing route patterns.
-
-## 6. Extending
-
-- **Customer portal**: the `customers` table and parcel-creation endpoint already exist;
-  add a `/customer` React route + tracking view following the Driver dashboard as a template.
-- **Reports (Section 13)**: aggregate queries similar to `dashboard.routes.js` `/summary`.
-- **Benchmarking (Section 18)**: `amfoa.js` exports `computeScore`/`allocateParcel`
-  directly, so a script can run First-Available / Nearest / Highest-Capacity strategies
-  against the same seeded data and diff the results for your academic comparison.
+This project is licensed under the MIT License — see the LICENSE file for details.
