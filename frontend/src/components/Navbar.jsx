@@ -9,12 +9,12 @@ export default function Navbar({ title }) {
     <header className="flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 shadow-sm sticky top-0 z-30 transition-colors">
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-sm shadow-blue-500/20">
-          S
+          F
         </div>
         <div>
           <h1 className="text-base font-bold text-slate-800 dark:text-slate-100">{title}</h1>
           <p className="text-[11px] text-slate-400 dark:text-slate-400 font-medium">
-            Smart Transportation & Parcel Allocation System • Ahmedabad
+            FleetManagementPortal • Ahmedabad Logistics Network
           </p>
         </div>
       </div>

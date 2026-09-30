@@ -132,6 +132,33 @@ npm run dev
 
 ---
 
+## ☁️ Deploying to Vercel & Remote Database Seeding
+
+When deploying to Vercel with a cloud PostgreSQL database (Neon, Supabase, Vercel Postgres, Render, etc.), you can easily initialize your database tables and seed sample Ahmedabad logistics data without needing a terminal:
+
+### 3 Ways to Trigger Remote Database Seeding:
+
+1. **Direct Browser URL**:
+   Open this URL in any browser tab:
+   ```
+   https://<your-app>.vercel.app/api/seed?secret=FleetPortalSeed2026
+   ```
+2. **Hidden UI Easter Egg on Login Screen**:
+   - Go to `/login` on your deployed site.
+   - **Click the "F" Logo 5 times** OR press **`Ctrl + Shift + S`** (or `Cmd + Shift + S` on Mac).
+   - The **Remote Database Seed Console** will pop up with the secret key prefilled.
+   - Click **"Execute Seed Script Now"** — it will create missing tables and seed all Ahmedabad hubs, vehicles, drivers, and parcels!
+3. **cURL / API Request**:
+   ```bash
+   curl -X POST https://<your-app>.vercel.app/api/seed \
+     -H "Content-Type: application/json" \
+     -d '{"secret": "FleetPortalSeed2026"}'
+   ```
+
+*(You can customize the secret key by setting the `SEED_SECRET` environment variable in Vercel settings).*
+
+---
+
 ## 📡 REST API Reference
 
 ### Authentication
